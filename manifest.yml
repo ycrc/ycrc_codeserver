@@ -1,0 +1,10 @@
+---
+name: Code Server 2 (Beta)
+category: Interactive Apps
+subcategory: Servers
+role: batch_connect
+description: |
+  This app will launch an Editor/IDE, [Code Server](https://coder.com), on a compute node.  Code Server is powered by the open source version of [Microsoft Visual Studio Code](https://code.visualstudio.com/).
+
+  - To stop the job click 'Delete' on the running interactive session card in OnDemand.
+  [Documentation](https://hpc.nmsu.edu/discovery/ondemand/vscode/)

@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+module load StdEnv
+
+# Ensure modules are set to default
+module purge
+# VSCode complains that system git is too old.
+module load git
+# load code-server
+module load <%= context.version %>
+
+[ ! -d <%= context.working_dir %> ] && mkdir <%= context.working_dir %>
+
+# made sure the code server bin path will appear at the beginning of PATH
+export PATH=$EBROOTCODEMINSERVER/bin:$PATH
+
+# Setup dirs for code-server permanant data
+CODE_SERVER_DATAROOT="$HOME/.local/share/code-server"
+mkdir -p "$CODE_SERVER_DATAROOT/extensions"
+
+# Export Staged Root
+OOD_STAGED_ROOT="<%= session.staged_root %>"
+
+# Set User Defined Workspace file
+<%- if context.working_dir.blank? -%>
+CW_FILE="${OOD_STAGED_ROOT}/job.code-workspace"
+<%- else -%>
+CW_FILE="<%= context.working_dir.to_s %>"
+<%- end -%> 
+
+# CD Into Home Directory
+cd "$HOME"
+
+<% if context.additional_modules != "" %>
+module load <%= context.additional_modules %>
+<% end %>
+
+# Start code server
+echo -e "\nStarting Code Server:"
+code-server \
+	--auth="password" \
+	--bind-addr="0.0.0.0:${PORT}" \
+	--disable-telemetry \
+	--disable-update-check \
+	--extensions-dir="$CODE_SERVER_DATAROOT/extensions" \
+	--user-data-dir="$CODE_SERVER_DATAROOT" \
+	--ignore-last-opened \
+	"$CW_FILE"
